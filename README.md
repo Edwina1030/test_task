@@ -3,7 +3,7 @@ test task for getting the chance to join the PMB WS2020_2021
 
 ## To Do List 03.11.2020
 1. with Pytorch build a model
-* [ ] 3 layers CNN model
+* [ ] 4 layers CNN model
 * [ ] can classify 2 classes 
 * [ ] built-in MNIST dataset from Python
 * [ ] trainning works
