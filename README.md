@@ -13,7 +13,6 @@ test task for getting the chance to join the PMB WS2020_2021
 * [ ] read text file 
 * [ ] how many images of each classes?
 * [ ] shuffle and split subsets with cross validation
-can use sklearn random split data set
 * [ ] balance the training data set
 
 3. extend the previous model to support the given data set
