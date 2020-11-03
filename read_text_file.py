@@ -18,3 +18,46 @@ label_count = image_label.value_counts() # transfer type
 label_count.sort_index(inplace=True)
 print('satistic of image labels')
 print(label_count)
+
+# manuel split
+size = 1797 // 5
+image_label1 = image_label[0:size-1]
+image_label2 = image_label[size:2*size-1]
+image_label3 = image_label[2*size:3*size-1]
+image_label4 = image_label[3*size:4*size-1]
+image_label5 = image_label[4*size:]
+
+print('==='*20)
+image_label1 = pd.Series(image_label1)
+label_count1 = image_label1.value_counts() # transfer type
+label_count1.sort_index(inplace=True)
+print('satistic of image label 1')
+print(label_count1)
+
+print('==='*20)
+image_label2 = pd.Series(image_label2)
+label_count2 = image_label2.value_counts() # transfer type
+label_count2.sort_index(inplace=True)
+print('satistic of image label 2')
+print(label_count2)
+
+print('==='*20)
+image_label3 = pd.Series(image_label3)
+label_count3 = image_label3.value_counts() # transfer type
+label_count3.sort_index(inplace=True)
+print('satistic of image label 3')
+print(label_count3)
+
+print('==='*20)
+image_label4 = pd.Series(image_label4)
+label_count4 = image_label4.value_counts() # transfer type
+label_count4.sort_index(inplace=True)
+print('satistic of image label 4')
+print(label_count4)
+
+print('==='*20)
+image_label5 = pd.Series(image_label5)
+label_count5 = image_label5.value_counts() # transfer type
+label_count5.sort_index(inplace=True)
+print('satistic of image label 5')
+print(label_count5)
