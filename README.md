@@ -10,8 +10,8 @@ test task for getting the chance to join the PMB WS2020_2021
 * [x] can classify 10 classes 
 
 2. analyze the given data set
-* [ ] read text file 
-* [ ] how many images of each classes?
+* [x] read text file 
+* [x] how many images of each classes?
 * [ ] shuffle and split subsets with cross validation
 * [ ] balance the training data set
 
