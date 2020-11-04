@@ -13,10 +13,13 @@ test task for getting the chance to join the PMB WS2020_2021
 * [x] read text file 
 * [x] how many images of each classes?
 * [x] load dataset into google Drive
-* [ ]  build my Dataset class, take care about “；” in text file
-* [ ] use sklearn shuffle and split subsets with cross validation
+* [x]  build my Dataset class, take care about “；” in text file
+* [x] plot
 * [ ] balance the training data set
-* [ ] plot
+* [ ] spilt main.py, run codes in my own laptop
+* [ ] use sklearn shuffle and split subsets with cross validation
+
+
 
 3. extend the previous model to support the given data set
 * [ ] running in local computer
