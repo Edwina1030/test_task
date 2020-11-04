@@ -9,179 +9,20 @@ Original file is located at
 
 # import relevante libraries
 import torch 
+import glob
+import cv2
 import numpy as np
 from torch import nn
 from torchvision.datasets import mnist # get built-in dataset MNIST
-from torch.utils.data import DataLoader # get iterative data
+from torchvision import transforms
+from torch.utils.data import Dataset, DataLoader # get iterative data
 from torch.autograd import Variable # get variable
 from torch import  optim
-from torchvision import transforms
- 
-# use built-in function to download MNIST dataset 
-train_set = mnist.MNIST('./data',
-                        train=True, #creates datasets from training.pt
-                        download=True
-                        )
-test_set = mnist.MNIST('./data',
-                       train=False, #creates datasets from testing.pt
-                       download=False
-                       )
- 
-# Image Preprocessing in one
-data_tf = transforms.Compose([transforms.ToTensor(), #transfer to Tensor type
-                             transforms.Normalize([0.5],[0.5])]
-                    # normalize tensor image with mean and standard deviation
-                            )
- 
-train_set = mnist.MNIST('./data', # when local dataset is processed, change it
-                        train=True,
-                        transform=data_tf,
-                        download=True
-                        ) 
-test_set = mnist.MNIST('./data', # when local dataset is processed, change it
-                       train=False,
-                       transform=data_tf,
-                       download=True
-                       )
-# to get iterative data
-train_data = DataLoader(train_set,
-                        batch_size=64,
-                        shuffle=True
-                        )
-test_data = DataLoader(test_set,
-                       batch_size=128,
-                       shuffle=False
-                       )
- 
-# defnite model
-class build_model(nn.Module):
-    def __init__(self):
-        super(build_model,self).__init__()
-        
-        self.layer1 = nn.Sequential(nn.Conv2d(in_channels = 1,
-                                              out_channels = 16,
-                                              kernel_size=3
-                                              ), 
-                                    nn.BatchNorm2d(16),
-                                    nn.ReLU(inplace=True)
-                                    )
-        
-        self.layer2 = nn.Sequential(nn.Conv2d(in_channels = 16,
-                                              out_channels = 32,
-                                              kernel_size=3
-                                              ),
-                                    nn.BatchNorm2d(32),
-                                    nn.ReLU(inplace=True),
-                                    nn.MaxPool2d(kernel_size=2,stride=2)
-                                    ) 
-        
-        self.layer3 = nn.Sequential(nn.Conv2d(in_channels = 32,
-                                              out_channels = 64,
-                                              kernel_size=3
-                                              ), 
-                                    nn.BatchNorm2d(64),
-                                    nn.ReLU(inplace=True)
-                                    )
-        
-        self.layer4 = nn.Sequential(nn.Conv2d(64,128,kernel_size=3), 
-                                    nn.BatchNorm2d(128),
-                                    nn.ReLU(inplace=True),
-                                    nn.MaxPool2d(kernel_size=2,stride=2)
-                                    )  
-        
-        self.fc = nn.Sequential(nn.Linear(128 * 4 * 4,1024),
-                                nn.ReLU(inplace=True),
-                                nn.Linear(1024,128),
-                                nn.ReLU(inplace=True),
-                                nn.Linear(128,10)
-                                )
-        
-    def forward(self,x):
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
-        x = x.view(x.size(0),-1)
-        x = self.fc(x)
-        
-        return x
-
-model = build_model()
-print(model)
-
-criterion = nn.CrossEntropyLoss() 
-optimizer = optim.SGD(model.parameters(),lr = 0.001) # may change later
-
-nums_epoch = 1 # for first try
- 
-# starting traning 
-losses = []
-acces = []
-eval_losses = []
-eval_acces = []
- 
-for epoch in range(nums_epoch):
-    train_loss = 0
-    train_acc = 0
-    model = model.train()
-    for img , label in train_data:
-        img = Variable(img)
-        label = Variable(label)
-        
-        # Forward propagation
-        out = model(img)
-        loss = criterion(out,label)
-        
-        # Back propagation
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        
-        # Record loss
-        train_loss += loss.item()
-        
-        # Calculate classification acc 
-        _,pred = out.max(1)
-        num_correct = (pred == label).sum().item()
-        acc = num_correct / img.shape[0]
-       
-        train_acc += acc
-        
-    losses.append(train_loss / len(train_data))
-    acces.append(train_acc / len(train_data))
-    
-    eval_loss = 0
-    eval_acc = 0
-
-    # testing daset will not be trained
-    for img , label in test_data:
-        #img = img.reshape(img.size(0),-1)
-        img = Variable(img)
-        label = Variable(label)
-        
-        out = model(img)
-        
-        loss = criterion(out,label)
-        
-         # Record loss
-        eval_loss += loss.item()
-        
-        _ , pred = out.max(1)
-        num_correct = (pred==label).sum().item()
-        acc = num_correct / img.shape[0]
-        
-        eval_acc += acc
-    eval_losses.append(eval_loss / len(test_data))
-    eval_acces.append(eval_acc / len(test_data))
-    
-    print('Epoch {} Training Loss {} Training  Accuracy {} Testing Loss {} Testing Accuracy {}'.format(
-        epoch+1, train_loss / len(train_data),train_acc / len(train_data), eval_loss / len(test_data), eval_acc / len(test_data)))
-
-from utils import image_processing
 import os
 
+# self defined Dataset
 class TorchDataset(Dataset):
-  def __init__(self, filname, image_dir, resize_height = None, resize_width = None, repeat = 1):
+  def __init__(self, filename, image_dir, resize_height = None, resize_width = None, repeat = 1):
     self.image_label_list = self.read_file(filename)
     self.image_dir = image_dir
     self.len = len(self.image_label_list)
@@ -195,7 +36,7 @@ class TorchDataset(Dataset):
     index = i % self.len  # print("i={},index={}".format(i, index))
     image_name, label = self.image_label_list[index]
     image_path = os.path.join(self.image_dir, image_name)
-    img = self.load_data(image_path, self.resize_height, self.resize_width, normalization=False)
+    img = self.load_data(image_path, self.resize_height, self.resize_width, normalization = False) 
     img = self.data_preproccess(img)
     label=np.array(label)
     return img, label
@@ -219,8 +60,9 @@ class TorchDataset(Dataset):
                     labels.append(int(value))
                 image_label_list.append((name, labels))
         return image_label_list
+  
 
-  def load_data(self, path, resize_height, resize_width, normalization):
+  def load_data(self, path, resize_height, resize_width, normalization): # here move informal parameter self
         '''
         load data
         :param path:
@@ -229,10 +71,10 @@ class TorchDataset(Dataset):
         :param normalization: 
         :return:
         '''
-        image = image_processing.read_image(path, resize_height, resize_width, normalization)
+        image = read_image(path, resize_height, resize_width, normalization)
         return image
  
-    def data_preproccess(self, data):
+  def data_preproccess(self, data):
         '''
         preprocessing
         :param data:
@@ -240,6 +82,387 @@ class TorchDataset(Dataset):
         '''
         data = self.toTensor(data)
         return data
+
+if __name__=='__main__':
+    train_filename = "/content/drive/My Drive/mnist/target.txt" # from google Drive
+  # test_filenmae = " "
+    image_dir = '/content/drive/My Drive/mnist/data'
+
+train_set = TorchDataset(filename=train_filename, 
+                         image_dir=image_dir,
+                         repeat=1
+                         )
+
+# test_set = TorchDataset(filename=test_filename,  # dataset has't spilt
+#                         image_dir=image_dir,
+#                         repeat=1
+#                         )
+
+
+# to get iterative data
+train_loader = DataLoader(train_set,
+                          batch_size=64,
+                          shuffle=False # from True to False
+                        )
+# test_data = DataLoader(test_set,
+#                        batch_size=1,
+#                        shuffle=False
+#                        )
+
+for batch_image, batch_label in train_loader:
+    image=batch_image[0,:]
+    image=image.numpy()#image=np.array(image)
+    image = image.transpose(1, 2, 0)  # 通道由[c,h,w]->[h,w,c]
+    # cv_show_image("image",image)
+    plt.figure()
+    plt.subplot(1,3,1)
+    plt.imshow(image[:,:,0])
+
+    plt.subplot(1,3,2)
+    plt.imshow(image[:,:,1])
+
+    plt.subplot(1,3,3)
+    plt.imshow(image[:,:,2])
+    print("batch_image.shape:{},batch_label:{}".format(batch_image.shape,batch_label))
+    break
+
+# defnite model
+class build_model(nn.Module):
+    def __init__(self):
+        super(build_model,self).__init__()
+        
+        self.layer1 = nn.Sequential(nn.Conv2d(in_channels = 3,
+                                              out_channels = 16,
+                                              kernel_size=3,
+                                              padding =1
+                                              ), 
+                                    nn.BatchNorm2d(16),
+                                    nn.ReLU(inplace=True)
+                                    )
+        
+        self.layer2 = nn.Sequential(nn.Conv2d(in_channels = 16,
+                                              out_channels = 32,
+                                              kernel_size=3,
+                                               padding =1
+                                              ),
+                                    nn.BatchNorm2d(32),
+                                    nn.ReLU(inplace=True),
+                                    nn.MaxPool2d(kernel_size=2,stride=2)
+                                    ) 
+        
+        self.layer3 = nn.Sequential(nn.Conv2d(in_channels = 32,
+                                              out_channels = 64,
+                                              kernel_size=3,
+                                               padding =1
+
+                                              ), 
+                                    nn.BatchNorm2d(64),
+                                    nn.ReLU(inplace=True)
+                                    )
+        
+        self.layer4 = nn.Sequential(nn.Conv2d(64,128,kernel_size=3, padding =1), 
+                                    nn.BatchNorm2d(128),
+                                    nn.ReLU(inplace=True),
+                                    nn.MaxPool2d(kernel_size=2,stride=2)
+                                    )  
+        
+        self.fc = nn.Sequential(nn.Linear(512,1024),
+                                nn.ReLU(inplace=True),
+                                nn.Linear(1024,128),
+                                nn.ReLU(inplace=True),
+                                nn.Linear(128,10)
+                                )
+        
+    def forward(self,x):
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+        x = x.view(x.size(0),-1)
+        x = self.fc(x)
+        
+        return x
+
+model = build_model()
+print(model)
+
+criterion = nn.CrossEntropyLoss() 
+optimizer = optim.SGD(model.parameters(),lr = 0.001) # may change later
+
+nums_epoch = 1 # for first try
+
+# starting traning 
+losses = []
+acces = []
+eval_losses = []
+eval_acces = []
+ 
+for epoch in range(nums_epoch):
+    train_loss = 0
+    train_acc = 0
+    model = model.train()
+    for img, label in train_loader:
+        img = Variable(img)
+        label = Variable(label)
+
+        # Forward propagation
+        out = model(img)
+        loss = criterion(out,label.reshape(-1))
+        
+        # Back propagation
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        
+        # Record loss
+        train_loss += loss.item()
+        
+        # Calculate classification acc 
+        _,pred = out.max(1)
+        num_correct = (pred == label).sum().item()
+        acc = num_correct / img.shape[0]
+       
+        train_acc += acc
+        
+    losses.append(train_loss / len(train_loader))
+    acces.append(train_acc / len(train_loader))
+    
+    eval_loss = 0
+    eval_acc = 0
+
+    # testing daset will not be trained
+    # for img , label in test_data:
+    #     #img = img.reshape(img.size(0),-1)
+    #     img = Variable(img)
+    #     label = Variable(label)
+        
+    #     out = model(img)
+        
+    #     loss = criterion(out,label)
+        
+    #      # Record loss
+    #     eval_loss += loss.item()
+        
+    #     _ , pred = out.max(1)
+    #     num_correct = (pred==label).sum().item()
+    #     acc = num_correct / img.shape[0]
+        
+    #     eval_acc += acc
+    # eval_losses.append(eval_loss / len(test_data))
+    # eval_acces.append(eval_acc / len(test_data))
+    print('Epoch {} Training Loss {} Training  Accuracy {} '.format(
+        epoch+1, train_loss / len(train_set),train_acc / len(train_set)))
+    
+
+    # print('Epoch {} Training Loss {} Training  Accuracy {} Testing Loss {} Testing Accuracy {}'.format(
+    #     epoch+1, train_loss / len(train_data),train_acc / len(train_data), eval_loss / len(test_data), eval_acc / len(test_data)))
+
+import os
+import glob
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+ 
+def show_image(title, image):
+    '''
+    调用matplotlib显示RGB图片
+    :param title: 图像标题
+    :param image: 图像的数据
+    :return:
+    '''
+    # plt.figure("show_image")
+    # print(image.dtype)
+    plt.imshow(image)
+    plt.axis('on')  # 关掉坐标轴为 off
+    plt.title(title)  # 图像题目
+    plt.show()
+ 
+def cv_show_image(title, image):
+    '''
+    调用OpenCV显示RGB图片
+    :param title: 图像标题
+    :param image: 输入RGB图像
+    :return:
+    '''
+    channels=image.shape[-1]
+    if channels==3:
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # 将BGR转为RGB
+    cv2.imshow(title,image)
+    cv2.waitKey(0)
+ 
+def read_image(filename, resize_height=None, resize_width=None, normalization = False):
+    '''
+    读取图片数据,默认返回的是uint8,[0,255]
+    :param filename:
+    :param resize_height:
+    :param resize_width:
+    :param normalization:是否归一化到[0.,1.0]
+    :return: 返回的RGB图片数据
+    '''
+ 
+    bgr_image = cv2.imread(filename)
+    # bgr_image = cv2.imread(filename,cv2.IMREAD_IGNORE_ORIENTATION|cv2.IMREAD_COLOR)
+    if bgr_image is None:
+        print("Warning:不存在:{}", filename)
+        return None
+    rgb_image = bgr_image
+
+    # show_image(filename,rgb_image)
+    # rgb_image=Image.open(filename)
+    rgb_image = resize_image(rgb_image,resize_height,resize_width)
+    rgb_image = np.asanyarray(rgb_image)
+    if normalization:
+        # 不能写成:rgb_image=rgb_image/255
+        rgb_image = rgb_image / 255.0
+    # show_image("src resize image",image)
+    return rgb_image
+ 
+def fast_read_image_roi(filename, orig_rect, ImreadModes=cv2.IMREAD_COLOR, normalization=False):
+    '''
+    快速读取图片的方法
+    :param filename: 图片路径
+    :param orig_rect:原始图片的感兴趣区域rect
+    :param ImreadModes: IMREAD_UNCHANGED
+                        IMREAD_GRAYSCALE
+                        IMREAD_COLOR
+                        IMREAD_ANYDEPTH
+                        IMREAD_ANYCOLOR
+                        IMREAD_LOAD_GDAL
+                        IMREAD_REDUCED_GRAYSCALE_2
+                        IMREAD_REDUCED_COLOR_2
+                        IMREAD_REDUCED_GRAYSCALE_4
+                        IMREAD_REDUCED_COLOR_4
+                        IMREAD_REDUCED_GRAYSCALE_8
+                        IMREAD_REDUCED_COLOR_8
+                        IMREAD_IGNORE_ORIENTATION
+    :param normalization: 是否归一化
+    :return: 返回感兴趣区域ROI
+    '''
+    # 当采用IMREAD_REDUCED模式时，对应rect也需要缩放
+    scale=1
+    if ImreadModes == cv2.IMREAD_REDUCED_COLOR_2 or ImreadModes == cv2.IMREAD_REDUCED_COLOR_2:
+        scale=1/2
+    elif ImreadModes == cv2.IMREAD_REDUCED_GRAYSCALE_4 or ImreadModes == cv2.IMREAD_REDUCED_COLOR_4:
+        scale=1/4
+    elif ImreadModes == cv2.IMREAD_REDUCED_GRAYSCALE_8 or ImreadModes == cv2.IMREAD_REDUCED_COLOR_8:
+        scale=1/8
+    rect = np.array(orig_rect)*scale
+    rect = rect.astype(int).tolist()
+    bgr_image = cv2.imread(filename,flags=ImreadModes)
+ 
+    if bgr_image is None:
+        print("Warning:不存在:{}", filename)
+        return None
+    if len(bgr_image.shape) == 3:  #
+        rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)  # 将BGR转为RGB
+    else:
+        rgb_image=bgr_image #若是灰度图
+    rgb_image = np.asanyarray(rgb_image)
+    if normalization:
+        # 不能写成:rgb_image=rgb_image/255
+        rgb_image = rgb_image / 255.0
+    roi_image=get_rect_image(rgb_image , rect)
+    # show_image_rect("src resize image",rgb_image,rect)
+    # cv_show_image("reROI",roi_image)
+    return roi_image
+ 
+def resize_image(image,resize_height, resize_width):
+    '''
+    :param image:
+    :param resize_height:
+    :param resize_width:
+    :return:
+    '''
+    image_shape=np.shape(image)
+    height=image_shape[0]
+    width=image_shape[1]
+    if (resize_height is None) and (resize_width is None):#错误写法：resize_height and resize_width is None
+        return image
+    if resize_height is None:
+        resize_height=int(height*resize_width/width)
+    elif resize_width is None:
+        resize_width=int(width*resize_height/height)
+    image = cv2.resize(image, dsize=(resize_width, resize_height))
+    return image
+def scale_image(image,scale):
+    '''
+    :param image:
+    :param scale: (scale_w,scale_h)
+    :return:
+    '''
+    image = cv2.resize(image,dsize=None, fx=scale[0],fy=scale[1])
+    return image
+ 
+ 
+def get_rect_image(image,rect):
+    '''
+    :param image:
+    :param rect: [x,y,w,h]
+    :return:
+    '''
+    x, y, w, h=rect
+    cut_img = image[y:(y+ h),x:(x+w)]
+    return cut_img
+def scale_rect(orig_rect,orig_shape,dest_shape):
+    '''
+    对图像进行缩放时，对应的rectangle也要进行缩放
+    :param orig_rect: 原始图像的rect=[x,y,w,h]
+    :param orig_shape: 原始图像的维度shape=[h,w]
+    :param dest_shape: 缩放后图像的维度shape=[h,w]
+    :return: 经过缩放后的rectangle
+    '''
+    new_x=int(orig_rect[0]*dest_shape[1]/orig_shape[1])
+    new_y=int(orig_rect[1]*dest_shape[0]/orig_shape[0])
+    new_w=int(orig_rect[2]*dest_shape[1]/orig_shape[1])
+    new_h=int(orig_rect[3]*dest_shape[0]/orig_shape[0])
+    dest_rect=[new_x,new_y,new_w,new_h]
+    return dest_rect
+ 
+def show_image_rect(win_name,image,rect):
+    '''
+    :param win_name:
+    :param image:
+    :param rect:
+    :return:
+    '''
+    x, y, w, h=rect
+    point1=(x,y)
+    point2=(x+w,y+h)
+    cv2.rectangle(image, point1, point2, (0, 0, 255), thickness=2)
+    cv_show_image(win_name, image)
+ 
+def rgb_to_gray(image):
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    return image
+ 
+def save_image(image_path, rgb_image,toUINT8=True):
+    if toUINT8:
+        rgb_image = np.asanyarray(rgb_image * 255, dtype=np.uint8)
+    if len(rgb_image.shape) == 2:  # 若是灰度图则转为三通道
+        bgr_image = cv2.cvtColor(rgb_image, cv2.COLOR_GRAY2BGR)
+    else:
+        bgr_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
+    cv2.imwrite(image_path, bgr_image)
+ 
+def combime_save_image(orig_image, dest_image, out_dir,name,prefix):
+    '''
+    命名标准：out_dir/name_prefix.jpg
+    :param orig_image:
+    :param dest_image:
+    :param image_path:
+    :param out_dir:
+    :param prefix:
+    :return:
+    '''
+    dest_path = os.path.join(out_dir, name + "_"+prefix+".jpg")
+    save_image(dest_path, dest_image)
+ 
+    dest_image = np.hstack((orig_image, dest_image))
+    save_image(os.path.join(out_dir, "{}_src_{}.jpg".format(name,prefix)), dest_image)
+
+"""# 新段落"""
+
+!pip install utils
 
 from google.colab import drive
 drive.mount('/content/drive')
