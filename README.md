@@ -15,7 +15,7 @@ test task for getting the chance to join the PMB WS2020_2021
 * [x] load dataset into google Drive
 * [x]  build my Dataset class, take care about “；” in text file
 * [x] plot
-* [ ] balance the training data set
+* [x] balance the training data set
 * [ ] spilt main.py, run codes in my own laptop
 * [ ] use sklearn shuffle and split subsets with cross validation
 
