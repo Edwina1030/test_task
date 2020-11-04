@@ -176,3 +176,77 @@ for epoch in range(nums_epoch):
     
     print('Epoch {} Training Loss {} Training  Accuracy {} Testing Loss {} Testing Accuracy {}'.format(
         epoch+1, train_loss / len(train_data),train_acc / len(train_data), eval_loss / len(test_data), eval_acc / len(test_data)))
+
+from google.colab import drive
+drive.mount('/content/drive')
+# if want to load file from google drive, use this path‘/content/drive/My Drive/filename’
+
+import numpy as np
+import pandas as pd
+# load txt.file as array
+txt2array = np.loadtxt('/content/drive/My Drive/mnist/target.txt', dtype=str, delimiter=';')
+print('the content of txt file:',txt2array)
+print('the shape of text file:',txt2array.shape)
+print('==='*20)
+
+# get the first column: name of images
+image_name = txt2array[:,0]
+print('name of all images:',image_name)
+# get the second column: label of images
+image_label = txt2array[:,1]
+print('label of all images:',image_label)
+print('==='*20)
+
+# statistic the lables of images
+image_label = pd.Series(image_label)
+label_count = image_label.value_counts() # transfer type
+label_count.sort_index(inplace=True)
+print('satistic of image labels')
+print(label_count)
+print('==='*20)
+
+# manuel split dataset into five subdataset
+# to know whether images are balanced
+size = 1797 // 5
+image_label_subset1 = image_label[0:size-1]
+image_label_subset2 = image_label[size:2*size-1]
+image_label_subset3 = image_label[2*size:3*size-1]
+image_label_subset4 = image_label[3*size:4*size-1]
+image_label_subset5 = image_label[4*size:]
+print('==='*20)
+
+image_label_subset1 = pd.Series(image_label_subset1)
+label_count_subset1 = image_label_subset1.value_counts() # transfer type
+label_count_subset1.sort_index(inplace=True)
+print('satistic of image labels of the 1. subset')
+print(label_count_subset1)
+print('==='*20)
+
+image_label_subset2 = pd.Series(image_label_subset2)
+label_count_subset2 = image_label_subset2.value_counts() # transfer type
+label_count_subset2.sort_index(inplace=True)
+print('satistic of image labels of the 2. subset')
+print(label_count_subset2)
+print('==='*20)
+
+image_label_subset3 = pd.Series(image_label_subset3)
+label_count_subset3 = image_label_subset3.value_counts() # transfer type
+label_count_subset3.sort_index(inplace=True)
+print('satistic of image labels of the 3. subset')
+print(label_count_subset3)
+print('==='*20)
+
+image_label_subset4 = pd.Series(image_label_subset4)
+label_count_subset4 = image_label_subset4.value_counts() # transfer type
+label_count_subset4.sort_index(inplace=True)
+print('satistic of image labels of the 4. subset')
+print(label_count_subset4)
+print('==='*20)
+
+image_label_subset5 = pd.Series(image_label_subset5)
+label_count_subset5 = image_label_subset5.value_counts() # transfer type
+label_count_subset5.sort_index(inplace=True)
+print('satistic of image labels of the 5. subset')
+print(label_count_subset5)
+
+# results shows labels of images in each subsets dispatched fast equally
