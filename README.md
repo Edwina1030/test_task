@@ -2,7 +2,7 @@
 1. Background: test task for getting the chance to join the PMB WS2020_2021
 2. Demand: based on a given dataset, use a CNN model, with Python and Pytorch to classify ten kinds of fonts of number
 3. Github Link for direct clone: git@github.com:Edwina1030/test_task.git
-4. Test on  MacOX 10.15.7 and Ubuntu 12.04
+4. Test on  MacOS 10.15.7 and Ubuntu 12.04
 
 # How to works?
 **1. setting virtual environment**
