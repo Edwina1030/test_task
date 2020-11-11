@@ -1,6 +1,7 @@
 # test_task
 1. Background: test task for getting the chance to join the PMB WS2020_2021
 2. Demand: based on given dataset, use a CNN model, with Python and Pytorch to classify 10 kinds of  fonts of number
+3. Github Link: git@github.com:Edwina1030/test_task.git
 
 # Tipps to implement 
 1. run the data_split.py, automatically split data
