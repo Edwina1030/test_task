@@ -2,6 +2,12 @@
 1. Background: test task for getting the chance to join the PMB WS2020_2021
 2. Demand: based on given dataset, use a CNN model, with Python and Pytorch to classify 10 kinds of  fonts of number
 
+# Tipps to implement 
+1. run the data_split.py, automatically split data
+2. run train_script.py, model and learning_curve.jpg will be saved
+3. run evaluation_script, confusion matrix will be saved
+
+
 # list of all files
 1. data folder 
 given folder of source data
