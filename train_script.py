@@ -20,6 +20,7 @@ model = build_model()
 batch_size = 64
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
+# using dichotomy, within 0.1 and 0.0001, get relative better performance with lr 0.001
 nums_epoch = 20
 
 train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
@@ -78,7 +79,7 @@ for epoch in range(nums_epoch):
 
     print('Epoch', epoch + 1)
     print('Training Loss:', train_loss / len(train_loader), 'Training Accuracy:', train_acc / len(train_loader))
-    print('Validation Loss:', val_loss / len(val_loader), 'Training Accuracy:', val_acc / len(val_loader))
+    print('Validation Loss:', val_loss / len(val_loader), 'Validation Accuracy:', val_acc / len(val_loader))
 
 min_val_loss = 1
 best_model = None
@@ -89,6 +90,8 @@ for epoch in range(nums_epoch):
         best_model = copy.deepcopy(model)
 model = best_model
 torch.save(model, './model.pkl')
+print('===='*10)
+print('best model is saved')
 
 x = range(nums_epoch)
 plt.figure()
@@ -111,5 +114,5 @@ plt.ylabel("Acc")
 plt.title("Training and Validation Acc")
 plt.legend(loc="upper left")
 
-plt.savefig("./learning_curve.jpg")
+plt.savefig("./learning_curve.jpg",)
 plt.show()

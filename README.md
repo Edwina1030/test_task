@@ -51,12 +51,12 @@ give a confusion matrix
 * [x] change the way to save model, not the last model.At the point where the loss function value of the validation set changes from falling to rising (ie the minimum), the model has the best generalization ability.
 * [x] Analyse standards, F1-Score, Precise, etc
 * [x] normalise Confusion Matrix
-* [ ] loss function
-* [ ] activation function
+* [x] loss function
+* [x] activation function
 * [ ] dropout
 * [ ] batch normalisation
 * [ ] optimizer, may using dynamic learning rate
+* [x] learning rate, using dichotomy, finally decided lr = 0.001
 * [ ] batch size
-* [ ] learning rate
 
 
