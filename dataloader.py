@@ -4,7 +4,6 @@ import numpy as np
 from torch.utils.data import Dataset
 from torchvision import transforms
 
-
 class TorchDataset(Dataset):
     def __init__(self, filename, image_dir, resize_height=None, resize_width=None, repeat=1):
 

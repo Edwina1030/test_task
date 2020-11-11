@@ -40,7 +40,6 @@ y_pred = pred
 cm = confusion_matrix(y_true, y_pred)
 cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
 cm = np.round(cm,2)
-print(cm)
 
 xtick=['0','1','2','3','4','5','6','7','8','9']
 ytick=['0', '1','2','3','4','5','6','7','8','9']
