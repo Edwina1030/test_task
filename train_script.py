@@ -6,6 +6,7 @@ from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader
 from dataloader import TorchDataset
 from model import build_model
+import copy
 
 train_val_filename = "./train_val.txt"
 train_val_dir = "./target_data/train_val"
@@ -79,7 +80,16 @@ for epoch in range(nums_epoch):
     print('Training Loss:', train_loss / len(train_loader), 'Training Accuracy:', train_acc / len(train_loader))
     print('Validation Loss:', val_loss / len(val_loader), 'Training Accuracy:', val_acc / len(val_loader))
 
+min_val_loss = 1
+best_model = None
+min_epoch = 10
+for epoch in range(nums_epoch):
+    if epoch > min_epoch and val_loss <= min_val_loss:
+        min_loss_val = val_loss
+        best_model = copy.deepcopy(model)
+model = best_model
 torch.save(model, './model.pkl')
+
 x = range(nums_epoch)
 plt.figure()
 
