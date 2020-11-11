@@ -10,9 +10,7 @@ pip3 install virtualenv
 ```
 **2. run setup.sh in current category**
 ```
-virtualenv testing
-source testing/bin/activate
-pip3 install -r requirements.txt
+./setup.sh
 ```
 Requirements.txt has problem about 'dataclasses == 0.7'. For better compatibility, ithas been manually modified as 'dataclasses == 0.6'
 
