@@ -53,10 +53,11 @@ give a confusion matrix
 * [x] normalise Confusion Matrix
 * [x] loss function
 * [x] activation function
-* [ ] dropout
-* [ ] batch normalisation
-* [ ] optimizer, may using dynamic learning rate
+* [x] dropout, make no big sense in this dataset
+* [x] batch normalisation, make no big sense in this dataset
+* [x] optimizer, may using dynamic learning rate, finally using Adam
 * [x] learning rate, using dichotomy, finally decided lr = 0.001
 * [x] batch size 64
+* [x] epochs, in 10-30 epochs, 15 epochs are enough
 
 

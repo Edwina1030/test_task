@@ -22,9 +22,10 @@ batch_size = 64 # relative better
 # 32 worse performance at all data sets
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
+# comparing with optimizer SGD,ASGD etc, Adam peformances still better
 # using dichotomy, within 0.1 and 0.0001, get relative better performance with lr 0.001
-nums_epoch = 20
-
+nums_epoch = 15
+# tranining 10-30 epoch, 15 is enough
 train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=True)
 
