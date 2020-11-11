@@ -44,8 +44,8 @@ cm = np.round(cm,2)
 xtick=['0','1','2','3','4','5','6','7','8','9']
 ytick=['0', '1','2','3','4','5','6','7','8','9']
 
+plt.figure()
 sn.heatmap(cm,fmt='g', cmap='Blues', annot=True,cbar=False,xticklabels=xtick, yticklabels=ytick)
-plt.tight_layout()
 plt.title('Confusion Matrix of 10 kinds of fonts')
 plt.ylabel('True label')
 plt.xlabel('Predicted label')
