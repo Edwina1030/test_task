@@ -47,7 +47,6 @@ give a confusion matrix
 * [x] running in local computer
 * [x] change model 
 * [x] confusion matrix
-* [ ] modify dataset_split.py, which could run again in new environment, wich could adapt to possbile changes of dataset
 * [x] change the way to save model, not the last model.At the point where the loss function value of the validation set changes from falling to rising (ie the minimum), the model has the best generalization ability.
 * [x] Analyse standards, F1-Score, Precise, etc
 * [x] normalise Confusion Matrix
@@ -59,5 +58,9 @@ give a confusion matrix
 * [x] learning rate, using dichotomy, finally decided lr = 0.001
 * [x] batch size 64
 * [x] epochs, in 10-30 epochs, 15 epochs are enough
+* [x] adjust space between subplots 
+
+4. for cross-platform running
+* [ ] modify dataset_split.py, which could run again in new environment, wich could adapt to possbile changes of dataset
 
 

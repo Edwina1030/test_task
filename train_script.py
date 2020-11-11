@@ -98,6 +98,7 @@ print('best model is saved')
 
 x = range(nums_epoch)
 plt.figure()
+plt.subplots_adjust(left=None, bottom=0.15, right=None, top=None, wspace=0.1, hspace=0.15)
 
 plt.subplot(2, 1, 1)
 plt.plot(x, train_loss_logs, "r", marker='o', ms=5, label="Training Loss")
@@ -117,5 +118,6 @@ plt.ylabel("Acc")
 plt.title("Training and Validation Acc")
 plt.legend(loc="upper left")
 
-plt.savefig("./learning_curve.jpg",)
+plt.tight_layout()
+plt.savefig("./learning_curve.jpg", bbox_inches='tight', dpi=300)
 plt.show()
