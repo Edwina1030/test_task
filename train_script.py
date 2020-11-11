@@ -5,13 +5,16 @@ from torch import optim
 from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader
 from dataloader import TorchDataset
+from dataset_split import train_val_array
 from model import build_model
 import copy
 
 train_val_filename = "./train_val.txt"
 train_val_dir = "./target_data/train_val"
 train_val_set = TorchDataset(filename=train_val_filename, image_dir=train_val_dir, repeat=1)
-train_set, val_set = torch.utils.data.random_split(train_val_set, [1150, 287])
+train_len = int(train_val_array.shape[0] * 0.8)
+validation_len = train_val_array.shape[0] -train_len
+train_set, val_set = torch.utils.data.random_split(train_val_set, [train_len, validation_len])
 
 print('number of images in training dataset:', len(train_set))
 print('number of images in validation dataset:', len(val_set))

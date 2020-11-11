@@ -62,6 +62,6 @@ give a confusion matrix
 
 4. for cross-platform running
 * [x] modify dataset_split.py, which can automatically split souce dataset
-* [ ] according to ratio split training and validation dataset
+* [x] according to ratio split training and validation dataset
 
 
