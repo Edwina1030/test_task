@@ -61,6 +61,7 @@ give a confusion matrix
 * [x] adjust space between subplots 
 
 4. for cross-platform running
-* [ ] modify dataset_split.py, which could run again in new environment, wich could adapt to possbile changes of dataset
+* [x] modify dataset_split.py, which can automatically split souce dataset
+* [ ] according to ratio split training and validation dataset
 
 
