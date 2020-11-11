@@ -17,7 +17,9 @@ print('number of images in training dataset:', len(train_set))
 print('number of images in validation dataset:', len(val_set))
 
 model = build_model()
-batch_size = 64
+batch_size = 64 # relative better
+# 128 better performance at training and validation data sets, worse at testing dataset
+# 32 worse performance at all data sets
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 # using dichotomy, within 0.1 and 0.0001, get relative better performance with lr 0.001

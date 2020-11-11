@@ -57,6 +57,6 @@ give a confusion matrix
 * [ ] batch normalisation
 * [ ] optimizer, may using dynamic learning rate
 * [x] learning rate, using dichotomy, finally decided lr = 0.001
-* [ ] batch size
+* [x] batch size 64
 
 
