@@ -25,7 +25,7 @@ load saved model, test it on test dataset
 print out loss and acc on test dataset
 give a confusion matrix
 
-## To Do List 09.11.2020 updated
+## To Do List 11.11.2020 updated
 1. with Pytorch build a model
 * [x] 4 layers CNN model
 * [x] built-in MNIST dataset from PyTorch
@@ -47,7 +47,8 @@ give a confusion matrix
 * [x] running in local computer
 * [x] change model 
 * [x] confusion matrix
-* [ ] change the way to save model, not the last model, to finde a model both good at loss and acc
+* [ ] modify dataset_split.py, which could run again in new environment, wich could adapt to possbile changes of dataset
+* [x] change the way to save model, not the last model.At the point where the loss function value of the validation set changes from falling to rising (ie the minimum), the model has the best generalization ability.
 * [ ] Analyse standards, F1-Score, Precise, etc
 * [ ] loss function
 * [ ] activation function
