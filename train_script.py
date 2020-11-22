@@ -9,8 +9,8 @@ from dataset_split import train_val_array
 from model import build_model
 import copy
 
-train_val_filename = "/usr/src/train_val.txt"
-train_val_dir = "/usr/src/target_data/train_val"
+train_val_filename = "/sotiling/git/test_task/train_val.txt"
+train_val_dir = "/sotiling/git/test_task/target_data/train_val"
 train_val_set = TorchDataset(filename=train_val_filename, image_dir=train_val_dir, repeat=1)
 train_len = int(train_val_array.shape[0] * 0.8)
 validation_len = train_val_array.shape[0] -train_len

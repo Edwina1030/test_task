@@ -10,7 +10,7 @@ def copy(srcpath, dstpath, filename):
         else:
             print(filename)
 
-srcpath = '/usr/src/data' # container中路径，已经被映射到local path中的data file
+srcpath = '/sotiling/git/test_task/data' # container中路径，已经被映射到local path中的data file
 if not os.path.isdir(srcpath):
     print('Warning: Source dataset not exists!')
     print('Please add a dataset folder named as data!')
@@ -37,7 +37,7 @@ print(train_val_label_count)
 np.savetxt('train_val.txt', train_val_array, fmt="%s;%s", delimiter=";")
 print('Successfully save txt file of training and validation dataset!')
 
-train_val_path = '/usr/src/target_data/train_val' # container中路径，已经被映射到local path中的data file
+train_val_path = '/sotiling/git/test_task/target_data/train_val' # container中路径，已经被映射到local path中的data file
 if not os.path.isdir(train_val_path):
     os.makedirs(train_val_path)
     print('Training and validation dataset is successfully created!')
@@ -64,7 +64,7 @@ print(test_label_count)
 np.savetxt('test.txt', test_array, fmt="%s;%s", delimiter=";")
 print('Successfully save txt file of test dataset!')
 
-test_path = '/usr/src/target_data/test' # container中路径，已经被映射到local path中的data file
+test_path = '/sotiling/git/test_task/target_data/test' # container中路径，已经被映射到local path中的data file
 print(test_path)
 if not os.path.isdir(test_path):
     os.makedirs(test_path)

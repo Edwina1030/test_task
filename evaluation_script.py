@@ -8,8 +8,8 @@ import seaborn as sn
 import matplotlib.pyplot as plt
 import numpy as np
 
-test_filename = "/usr/src/test.txt"
-test_dir = "/usr/src/target_data/test"
+test_filename = "/sotiling/git/test_task/test.txt"
+test_dir = "/sotiling/git/test_task/target_data/test"
 test_set = TorchDataset(filename=test_filename, image_dir=test_dir, repeat=1)
 test_loader = DataLoader(test_set, batch_size=128, shuffle=False)
 
